@@ -1,398 +1,349 @@
-\# Network Project: Branch, Main Office, IT \& HR
+# 🌐 Enterprise Network Design: Branch, Main Office, IT & HR
 
+![Cisco Packet Tracer](https://img.shields.io/badge/Cisco-Packet%20Tracer-blue)
+![Routing](https://img.shields.io/badge/Routing-EIGRP%20AS%20100-orange)
+![Switching](https://img.shields.io/badge/Switching-VLANs%20%26%20802.1Q-green)
+![Services](https://img.shields.io/badge/Services-DHCP%20%7C%20DNS%20%7C%20Wireless-lightgrey)
 
+## 📌 نظرة عامة
 
-\## Overview
+هذا المشروع يعرض شبكة شركة كاملة وفعالة تم تصميمها ومحاكاتها باستخدام **Cisco Packet Tracer**. يحاكي بيئة مؤسسية حقيقية تربط بين ثلاث مواقع جغرافية رئيسية:
+- 🏢 **المكتب الرئيسي** (Main Office)
+- 💼 **قسم تكنولوجيا المعلومات والموارد البشرية** (IT & HR Department)
+- 🌐 **فرع بعيد** (Branch)
 
-A corporate network designed in Cisco Packet Tracer with three main sites: Main Office, IT \& HR, and Branch. The network uses EIGRP AS 100 for dynamic routing, DHCP for client devices, VLANs for segmentation, and static addressing for servers and IT/HR devices.
+تطبق الشبكة توجيهاً متقدماً وتبديلاً وخدمات شبكية لضمان اتصال سلس وقابلية للتوسع وتقسيم الأقسام.
 
+---
 
+## 🚀 المزايا الرئيسية والتقنيات
 
-\---
+| الميزة | التفاصيل |
+|--------|----------|
+| **التوجيه الديناميكي** | EIGRP AS 100 لنشر المسارات الداخلية |
+| **تقسيم الشبكة** | VLANs (10, 14, 20, 30, 40, 1) لعزل الأقسام |
+| **التوجيه بين VLANs** | Router-on-a-Stick (802.1Q Trunking) على R1 |
+| **تعيين IP تلقائي** | خادم DHCP مركزي للمكتب الرئيسي والفرع |
+| **التكامل اللاسلكي** | نقطة وصول (Access Point) لأجهزة قسم الموارد البشرية |
+| **عالي التوفر** | واجهات Loopback (8.8.8.1, 9.9.9.1, 10.1.1.1) للتوجيه المستقر |
+| **التحكم بالوصول** | قوائم ACL قياسية لتصفية حركة المرور |
 
+---
 
+## 🗺️ خريطة الشبكة
 
-\## Full Network Topology
+![Full Network Topology](./images/full-topology.jpg)
 
+*الرسم البياني أعلاه يوضح الطوبولوجيا الكاملة من طرف إلى طرف عبر جميع المواقع الثلاثة.*
 
+---
 
-!\[Full Network Topology](images/full-topology.png)
+## 🏢 تفصيل المواقع
 
+### 1️⃣ فرع المكتب (Branch Office)
 
+![Branch Topology](./images/branch.jpg)
 
-\*\*Main components:\*\*
+#### الأجهزة والشبكات
+| العنصر | التفاصيل |
+|--------|----------|
+| **الأجهزة** | جهاز توجيه R3، مفتاح Switch1، PC4، PC5 |
+| **الشبكة** | 192.168.3.0/24 (DHCP مفعّل) |
+| **الروابط** | اتصال متسلسل بالمكتب الرئيسي (11.1.1.0/24) |
+| **Loopback** | 10.1.1.1/32 |
 
-\- Main Office (R2, Switch0, DHCP server, PC0, PC1)
-
-\- IT \& HR (R1, Switch2, IT PCs, HR devices, Tech Support, DNS server)
-
-\- Branch (R3, Switch1, PC4, PC5)
-
-
-
-\---
-
-
-
-\## 1. Branch
-
-
-
-!\[Branch Topology](images/branch.png)
-
-
-
-\- Router R3, Switch1, PC4, PC5
-
-\- DHCP for PC4 and PC5
-
-\- Loopback: 10.1.1.1/32
-
-\- Serial link to R2: 11.1.1.2
-
-\- LAN: 192.168.3.0/24
-
-
-
-\*\*EIGRP on R3:\*\*
+#### تكوين EIGRP (R3)
 
 ```cisco
-
 router eigrp 100
-
-&#x20;network 192.168.3.0 0.0.0.255
-
-&#x20;network 11.1.1.0 0.0.0.255
-
-&#x20;network 10.1.1.0 0.0.0.255
-
-&#x20;no auto-summary
-
+ network 192.168.3.0 0.0.0.255
+ network 11.1.1.0 0.0.0.255
+ network 10.1.1.0 0.0.0.255
+ no auto-summary
 ```
 
+![EIGRP R3 Routing Table](./images/eigrp-r3.jpg)
 
+---
 
-\*\*Routing table:\*\*
+### 2️⃣ المكتب الرئيسي (Main Office)
 
-!\[EIGRP R3](images/eigrp-r3.png)
+![Main Office Topology](./images/main-office.jpg)
 
+#### الأجهزة والشبكات
+| العنصر | التفاصيل |
+|--------|----------|
+| **الأجهزة** | جهاز توجيه R2، مفتاح Switch0، خادم DHCP، PC0، PC1 |
+| **VLANs** | VLAN 10 (users_office) و VLAN 20 (DHCP_server) |
+| **الروابط** | متسلسل إلى R3 (11.1.1.0/24) ومتسلسل إلى R1 (10.1.1.0/24) |
+| **Loopback** | 9.9.9.1/32 |
 
-
-\---
-
-
-
-\## 2. Main Office
-
-
-
-!\[Main Office Topology](images/main-office.png)
-
-
-
-\- Router R2, Switch0, DHCP Server, PC0, PC1
-
-\- VLAN 10 (users\_office), VLAN 20 (DHCP\_server)
-
-\- Loopback: 9.9.9.1/32
-
-\- Serial link to R3: 11.1.1.1
-
-\- Serial link to R1: 10.1.1.1
-
-
-
-\*\*VLAN Database on Switch0:\*\*
-
-!\[VLAN Switch0](images/vlan-switch0.png)
-
-
-
-\*\*VLANs configuration:\*\*
+#### تكوين VLAN والـ Trunk (Switch0)
 
 ```cisco
-
 vlan 10
-
-&#x20;name users\_office
-
+ name users_office
+!
 vlan 20
-
-&#x20;name DHCP\_server
-
-interface fa0/1
-
-&#x20;switchport mode trunk
-
-interface fa0/2
-
-&#x20;switchport mode access
-
-&#x20;switchport access vlan 20
-
-interface fa0/3
-
-&#x20;switchport mode access
-
-&#x20;switchport access vlan 10
-
-interface fa0/4
-
-&#x20;switchport mode access
-
-&#x20;switchport access vlan 10
-
+ name DHCP_server
+!
+interface FastEthernet0/1
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 20
+!
+interface FastEthernet0/3
+ switchport mode access
+ switchport access vlan 10
 ```
 
+![VLAN Configuration](./images/vlan-switch0.jpg)
 
-
-\*\*EIGRP on R2:\*\*
+#### تكوين EIGRP (R2)
 
 ```cisco
-
 router eigrp 100
-
-&#x20;network 192.168.20.0 0.0.0.255
-
-&#x20;network 192.168.1.0 0.0.0.255
-
-&#x20;network 9.9.9.0 0.0.0.255
-
-&#x20;network 10.0.0.0 0.0.0.255
-
-&#x20;network 11.1.1.0 0.0.0.255
-
-&#x20;no auto-summary
-
+ network 192.168.20.0 0.0.0.255
+ network 192.168.1.0 0.0.0.255
+ network 9.9.9.0 0.0.0.255
+ network 10.0.0.0 0.0.0.255
+ network 11.1.1.0 0.0.0.255
+ no auto-summary
 ```
 
+![EIGRP R2 Routing Table](./images/eigrp-r2.png)
 
+---
 
-\*\*Routing table:\*\*
+### 3️⃣ قسم تكنولوجيا المعلومات والموارد البشرية (IT & HR Department)
 
-!\[EIGRP R2](images/eigrp-r2.png)
+| العنصر | التفاصيل |
+|--------|----------|
+| **الأجهزة** | جهاز توجيه R1، مفتاح Switch2، أجهزة الحاسوب، خادم DNS، نقطة وصول |
+| **الروابط** | متسلسل إلى R2 (10.1.1.0/24) |
+| **Loopback** | 8.8.8.1/32 |
 
+#### 3.1 قسم تكنولوجيا المعلومات (IT Department - VLAN 30)
 
+![IT Department](./images/it-department.jpg)
 
-\---
-
-
-
-\## 3. IT \& HR Department
-
-
-
-!\[IT \& HR Topology](images/it-hr.png)
-
-
-
-\- Router R1
-
-\- Switch2 with VLANs 30, 40, 14, 1
-
-\- Loopback: 8.8.8.1/32
-
-\- Serial link to R2: 10.1.1.2
-
-\- LAN to Switch2: 192.168.2.1
-
-
-
-\### 3.1 IT Department (VLAN 30)
-
-
-
-!\[IT Department](images/it-department.png)
-
-
-
-| Device | IP | Gateway | DNS |
-
-|--------|-----|---------|-----|
-
+| الجهاز | عنوان IP | البوابة | DNS |
+|-------|---------|--------|-----|
 | PC2 | 192.168.50.2 | 192.168.50.1 | 192.168.2.2 |
-
 | PC3 | 192.168.50.3 | 192.168.50.1 | 192.168.2.2 |
 
+#### 3.2 قسم الموارد البشرية (HR Department - VLAN 40)
 
+![HR Department](./images/hr-department.jpg)
 
-\### 3.2 HR Department (VLAN 40)
+تتصل أجهزة الموارد البشرية لاسلكياً من خلال نقطة وصول (Access Point).
 
-
-
-!\[HR Department](images/hr-department.png)
-
-
-
-| Device | IP | Gateway | DNS |
-
-|--------|-----|---------|-----|
-
+| الجهاز | عنوان IP | البوابة | DNS |
+|-------|---------|--------|-----|
 | Laptop0 | 192.168.60.2 | 192.168.60.1 | 192.168.2.2 |
-
 | Printer0 | 192.168.60.3 | 192.168.60.1 | 192.168.2.2 |
-
 | Laptop1 | 192.168.60.4 | 192.168.60.1 | 192.168.2.2 |
-
 | Tablet PC0 | 192.168.60.5 | 192.168.60.1 | 192.168.2.2 |
 
+#### 3.3 دعم التكنولوجيا (Tech Support - VLAN 14)
 
+![Tech Support](./images/tech-support.jpg)
 
-HR devices connect wirelessly through an Access Point.
-
-
-
-\### 3.3 Tech Support (VLAN 14)
-
-
-
-!\[Tech Support](images/tech-support.png)
-
-
-
-| Device | IP | Gateway | DNS |
-
-|--------|-----|---------|-----|
-
+| الجهاز | عنوان IP | البوابة | DNS |
+|-------|---------|--------|-----|
 | PC6 | 192.168.70.2 | 192.168.70.1 | 192.168.50.50 |
 
+#### 3.4 خادم DNS (VLAN 1)
 
+![DNS Server](./images/dns-server.jpg)
 
-\### 3.4 DNS Server (VLAN 1)
-
-
-
-!\[DNS Server](images/dns-server.png)
-
-
-
-| Device | IP | Gateway |
-
-|--------|-----|---------|
-
+| الجهاز | عنوان IP | البوابة |
+|-------|---------|--------|
 | Server-PT DNS | 192.168.2.2 | 192.168.2.1 |
 
-
-
-\*\*Router-on-a-Stick configuration (R1):\*\*
+#### تكوين Router-on-a-Stick (R1)
 
 ```cisco
-
-interface fa0/0.14
-
-&#x20;encapsulation dot1Q 14
-
-&#x20;ip address 192.168.70.1 255.255.255.0
-
-interface fa0/0.40
-
-&#x20;encapsulation dot1Q 40
-
-&#x20;ip address 192.168.60.1 255.255.255.0
-
+interface FastEthernet0/0.14
+ encapsulation dot1Q 14
+ ip address 192.168.70.1 255.255.255.0
+!
+interface FastEthernet0/0.40
+ encapsulation dot1Q 40
+ ip address 192.168.60.1 255.255.255.0
 ```
 
-
-
-\*\*EIGRP on R1:\*\*
+#### تكوين EIGRP (R1)
 
 ```cisco
-
 router eigrp 100
-
-&#x20;network 192.168.2.0 0.0.0.255
-
-&#x20;network 192.168.50.0 0.0.0.255
-
-&#x20;network 192.168.70.0 0.0.0.255
-
-&#x20;network 10.1.1.0 0.0.0.255
-
-&#x20;network 192.168.60.0 0.0.0.255
-
-&#x20;network 8.8.8.0 0.0.0.255
-
-&#x20;no auto-summary
-
+ network 192.168.2.0 0.0.0.255
+ network 192.168.50.0 0.0.0.255
+ network 192.168.70.0 0.0.0.255
+ network 10.1.1.0 0.0.0.255
+ network 192.168.60.0 0.0.0.255
+ network 8.8.8.0 0.0.0.255
+ no auto-summary
 ```
 
+![EIGRP R1 Routing Table](./images/eigrp-r1.jpg)
 
+---
 
-\*\*Routing table:\*\*
+## 🛡️ قوائم التحكم بالوصول (ACLs)
 
-!\[EIGRP R1](images/eigrp-r1.png)
+![ACL Configuration](./images/acl-config.jpg)
 
+تم تطبيق قوائم ACL قياسية للتحكم في تدفق حركة المرور بين الأقسام المحددة، مما يضمن الامتثال لسياسات الأمان.
 
+---
 
-\---
+## 📊 ملخص عناوين IP
 
+| الموقع | الشبكة | البوابة |
+|--------|--------|--------|
+| **فرع المكتب** | 192.168.3.0/24 | 192.168.3.1 |
+| **المكتب الرئيسي** | 192.168.1.0/24 | 192.168.1.1 |
+| **خادم DHCP** | 192.168.20.0/24 | 192.168.20.1 |
+| **خادم DNS** | 192.168.2.0/24 | 192.168.2.1 |
+| **قسم تكنولوجيا المعلومات** | 192.168.50.0/24 | 192.168.50.1 |
+| **قسم الموارد البشرية** | 192.168.60.0/24 | 192.168.60.1 |
+| **دعم التكنولوجيا** | 192.168.70.0/24 | 192.168.70.1 |
+| **رابط R1 ↔ R2** | 10.1.1.0/24 | — |
+| **رابط R2 ↔ R3** | 11.1.1.0/24 | — |
 
+---
 
-\## Protocols and Technologies Used
+## 📂 ملفات المشروع
 
-\- \*\*EIGRP AS 100\*\* — dynamic routing between R1, R2, R3
+```
+project-folder/
+├── README.md                          # هذا الملف
+├── network_project.pkt                # ملف محاكاة Cisco Packet Tracer
+└── images/                            # مجلد يحتوي على جميع الرسوم البيانية
+    ├── full-topology.jpg              # الطوبولوجيا الكاملة
+    ├── branch.jpg                     # فرع المكتب
+    ├── main-office.jpg                # المكتب الرئيسي
+    ├── it-department.jpg              # قسم تكنولوجيا المعلومات
+    ├── hr-department.jpg              # قسم الموارس البشرية
+    ├── tech-support.jpg               # دعم التكنولوجيا
+    ├── dns-server.jpg                 # خادم DNS
+    ├── vlan-switch0.jpg               # تكوين VLAN على Switch0
+    ├── eigrp-r1.jpg                   # جدول التوجيه على R1
+    ├── eigrp-r2.png                   # جدول التوجيه على R2
+    ├── eigrp-r3.jpg                   # جدول التوجيه على R3
+    └── acl-config.jpg                 # تكوين قوائم التحكم بالوصول
+```
 
-\- \*\*DHCP\*\* — automatic IP assignment for Main Office and Branch PCs
+---
 
-\- \*\*VLANs\*\* — network segmentation (10, 20, 30, 40, 14, 1)
+## ⚙️ كيفية التشغيل والتحقق
 
-\- \*\*802.1Q Trunking\*\* — Router-on-a-Stick on R1
+### المتطلبات الأساسية
+- Cisco Packet Tracer (الإصدار 8.x أو أعلى)
+- نظام التشغيل: Windows أو macOS أو Linux
 
-\- \*\*Wireless\*\* — HR devices connect via Access Point
+### خطوات التشغيل
 
-\- \*\*Loopback interfaces\*\* — 8.8.8.1, 9.9.9.1, 10.1.1.1
+1. **تثبيت Cisco Packet Tracer**
+   ```bash
+   # اذهب إلى: https://www.netacad.com/
+      ```
 
+2. **استنساخ أو تحميل المشروع**
+   ```bash
+   git clone https://github.com/your-username/Network-Project.git
+   cd Network-Project
+   ```
 
+3. **فتح ملف الباكت**
+   - افتح Cisco Packet Tracer
+   - اذهب إلى: File → Open
+   - حدد `network_project.pkt`
 
-\## IP Addressing Summary
+4. **التحقق من الاتصال end-to-end**
+   ```
+   من PC2 إلى PC4 (اختبار عبر المواقع المختلفة)
+   أمثلة على أوامر Ping:
+   - PC2 → PC4 (من IT إلى Branch)
+   - PC0 → Laptop0 (من Main Office إلى HR)
+   ```
 
+5. **التحقق من جداول التوجيه EIGRP**
+   ```cisco
+   R1# show ip route eigrp
+   R2# show ip route eigrp
+   R3# show ip route eigrp
+   ```
 
+6. **التحقق من تكوينات VLAN**
+   ```cisco
+   Switch0# show vlan brief
+   Switch2# show vlan brief
+   ```
 
-| Site | Network | Gateway |
+7. **التحقق من حالة الروابط المتسلسلة**
+   ```cisco
+   R1# show interfaces serial 0/0
+   R2# show interfaces serial 0/0
+   R2# show interfaces serial 0/1
+   R3# show interfaces serial 0/0
+   ```
 
-|------|---------|---------|
+8. **اختبار خدمات DHCP و DNS**
+   ```
+   قم بتحديث IP للأجهزة المحمولة والتحقق من حصول الأجهزة على عناوين IP من خادم DHCP
+   جرب استعلامات DNS من خادم DNS المركزي
+   ```
 
-| Branch LAN | 192.168.3.0/24 | 192.168.3.1 |
+---
 
-| Main Office LAN | 192.168.1.0/24 | 192.168.1.1 |
+## 🔍 المقاييس الأداء والتحقق
 
-| DHCP Server | 192.168.20.0/24 | 192.168.20.1 |
+### اختبارات الاتصال (Connectivity)
+- ✅ Ping بين جميع الأجهزة في نفس VLAN
+- ✅ Ping بين VLANs المختلفة عبر R1
+- ✅ Ping عبر المواقع (Branch ↔ Main Office ↔ IT & HR)
 
-| DNS Server | 192.168.2.0/24 | 192.168.2.1 |
+### التحقق من التوجيه (Routing)
+- ✅ جميع الشبكات مرئية في جداول التوجيه
+- ✅ EIGRP يعلن بشكل صحيح عن جميع الشبكات
+- ✅ الروابط المتسلسلة مفعلة وتعمل
 
-| IT | 192.168.50.0/24 | 192.168.50.1 |
+### التحقق من الخدمات (Services)
+- ✅ خادم DHCP يوزع عناوين IP بنجاح
+- ✅ خادم DNS يحل الأسماء بشكل صحيح
+- ✅ نقطة الوصول توفر اتصالاً لاسلكياً آمناً
 
-| HR | 192.168.60.0/24 | 192.168.60.1 |
+---
 
-| Tech Support | 192.168.70.0/24 | 192.168.70.1 |
+## 📝 ملاحظات مهمة
 
-| R1 ↔ R2 link | 10.1.1.0/24 | — |
+> **ملاحظة 1:** جميع الأجهزة مكونة مسبقاً في ملف `.pkt`. لا تحتاج إلى إعادة تكوين يدوية إلا إذا كنت تريد اختبار تغييرات معينة.
 
-| R2 ↔ R3 link | 11.1.1.0/24 | — |
+> **ملاحظة 2:** الشبكة محسّنة لأغراض تعليمية وسهولة الفهم. في الإنتاج، قد تحتاج إلى اعتبارات إضافية للأمان والأداء.
 
+> **ملاحظة 3:** تأكد من أن جميع الأجهزة متصلة بالشبكة بشكل فعلي (الروابط خضراء في Packet Tracer).
 
+---
 
-\## Files
+## 👨‍💻 المؤلف
 
-\- `network\_project.pkt` — Cisco Packet Tracer file
+**Zeyad**
 
-\- `images/` — Topology and configuration screenshots
+---
 
+## 📜 الترخيص
 
+هذا المشروع متاح للاستخدام التعليمي. يرجى عدم استخدامه لأغراض تجارية دون إذن.
 
-\## How to Open
+---
 
-1\. Install Cisco Packet Tracer (v8.x recommended).
+## 📞 التواصل والدعم
 
-2\. Open `network\_project.pkt`.
-
-3\. Verify EIGRP with `show ip route eigrp` on R1, R2, R3.
-
-4\. Verify VLANs with `show vlan brief` on Switch0.
-
-
-
-\## Author
-
-\[Zeyad]
+في حالة وجود أي استفسارات أو مشاكل:
+- تحقق من أن جميع الأجهزة متصلة بشكل صحيح
+- تأكد من أن الإصدار الصحيح من Cisco Packet Tracer مثبت
 
