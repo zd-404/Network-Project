@@ -254,7 +254,7 @@ project-folder/
 
 2. **استنساخ أو تحميل المشروع**
    ```bash
-   git clone https://github.com/your-username/Network-Project.git
+   git clone https://github.com/zd-404/Network-Project.git
    cd Network-Project
    ```
 
